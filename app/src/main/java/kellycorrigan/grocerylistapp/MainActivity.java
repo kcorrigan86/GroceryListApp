@@ -126,8 +126,9 @@ public class MainActivity extends AppCompatActivity {
         // Add all items in the database into an ArrayList
         ArrayList<String> groceryList = new ArrayList<>();
         SQLiteDatabase db = mHelper.getReadableDatabase();
+
         Cursor cursor = db.query(mHelper.TABLE_GROCERY_LIST,
-                new String[]{ItemContract.ItemEntry._ID, mHelper.KEY_ITEM},
+                new String[]{mHelper.KEY_ITEM},
                 null, null, null, null, null);
         while(cursor.moveToNext()) {
             int idx = cursor.getColumnIndex(mHelper.KEY_ITEM);
