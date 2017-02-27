@@ -19,9 +19,6 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/purchasedCheckBox"
         android:layout_toEndOf="@+id/purchasedCheckBox"
-        android:text="Hello"
         android:textSize="20sp" />
-
-
 
 </RelativeLayout>
