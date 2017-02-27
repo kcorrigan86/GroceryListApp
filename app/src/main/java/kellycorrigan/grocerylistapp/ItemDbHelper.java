@@ -5,22 +5,54 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class ItemDbHelper extends SQLiteOpenHelper {
+    // Logcat tag
+    private static final String LOG = "DatabaseHelper";
+
+    // Database Version
+    private static final int DATABASE_VERSION = 1;
+
+    // Database name
+    private static final String DATABASE_NAME = "groceryItemsManager";
+
+    // Table names
+    public static final String TABLE_GROCERY_LIST = "grocery_list_items";
+    public static final String TABLE_PURCHASED_LIST = "purchased_list_items";
+
+    // Column names
+    public static final String KEY_ID = "id";
+    public static final String KEY_ITEM = "item";
+    public static final String KEY_DATE = "date";
+    public static final String KEY_LAT = "latitude";
+    public static final String KEY_LONG = "longitude";
+
+    // Grocery list table create statement
+    private static final String CREATE_TABLE_GROCERY = "CREATE TABLE " +
+            TABLE_GROCERY_LIST + " (" + KEY_ID + " INTEGER PRIMARY KEY," + KEY_ITEM +
+            " TEXT) ";
+
+    // Purchased items table create statement
+    private static final String CREATE_TABLE_PURCHASED = "CREATE TABLE " +
+            TABLE_PURCHASED_LIST + " (" + KEY_ID + " INTEGER PRIMARY KEY," + KEY_ITEM +
+            " TEXT," + KEY_DATE + " DATETIME) ";
+
     public ItemDbHelper(Context context) {
-        super(context, ItemContract.DB_NAME, null, ItemContract.DB_VERSION);
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
+    // Create tables
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String createTable = "CREATE TABLE " + ItemContract.ItemEntry.TABLE + " ( " +
-                ItemContract.ItemEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                ItemContract.ItemEntry.COL_ITEM_TITLE + " TEXT NOT NULL);";
-
-        db.execSQL(createTable);
+        db.execSQL(CREATE_TABLE_GROCERY);
+        db.execSQL(CREATE_TABLE_PURCHASED);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + ItemContract.ItemEntry.TABLE);
+        // On upgrade drop older tables
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_GROCERY_LIST);
+        db.execSQL("DROP TABLE IF EXISTS" + TABLE_PURCHASED_LIST);
+
+        // Create new tables
         onCreate(db);
     }
 }

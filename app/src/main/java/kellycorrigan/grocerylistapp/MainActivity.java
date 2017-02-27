@@ -2,6 +2,7 @@ package kellycorrigan.grocerylistapp;
 
 // Package sources:
 // https://www.sitepoint.com/starting-android-development-creating-todo-app/
+// http://www.androidhive.info/2013/09/android-sqlite-database-with-multiple-tables/
 
 
 import android.app.AlertDialog;
@@ -61,11 +62,15 @@ public class MainActivity extends AppCompatActivity {
                                 String item = String.valueOf(itemEditText.getText());
                                 SQLiteDatabase db = mHelper.getWritableDatabase();
                                 ContentValues values = new ContentValues();
-                                values.put(ItemContract.ItemEntry.COL_ITEM_TITLE, item);
-                                db.insertWithOnConflict(ItemContract.ItemEntry.TABLE,
+                                values.put(mHelper.KEY_ITEM, item);
+
+                                // Insert row
+                                db.insertWithOnConflict(
+                                        mHelper.TABLE_GROCERY_LIST,
                                         null,
                                         values,
                                         SQLiteDatabase.CONFLICT_REPLACE);
+
                                 db.close();
                                 updateUI();
                             }
@@ -81,21 +86,33 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Delete an item once it is checked off
-    public void deleteItem(View view) {
+    // Once an item is checked off, it is removed from the grocery list and added
+    // to the purchased list
+    public void checkOffItem(View view) {
         // Take the passed-in checkbox and find the text of the grocery item it belongs to
         View parent = (View) view.getParent();
         TextView itemTextView = (TextView) parent.findViewById(R.id.item_title);
         String item = String.valueOf(itemTextView.getText());
 
-        // Remove the grocery item from the database
+        // Remove the item from the grocery list table of the database
         SQLiteDatabase db = mHelper.getWritableDatabase();
-        db.delete(ItemContract.ItemEntry.TABLE,
-                ItemContract.ItemEntry.COL_ITEM_TITLE + " = ?",
+        db.delete(
+                mHelper.TABLE_GROCERY_LIST,
+                mHelper.KEY_ITEM + " = ?",
                 new String[]{item});
+
+        // Add the item to the purchased items table of the database
+        ContentValues values = new ContentValues();
+        values.put(mHelper.KEY_ITEM, item);
+        db.insertWithOnConflict(
+                mHelper.TABLE_PURCHASED_LIST,
+                null,
+                values,
+                SQLiteDatabase.CONFLICT_REPLACE);
+
         db.close();
 
-        // Uncheck the checkbox because it will be reused
+        // Uncheck the checkbox in the grocery list because it will be reused
         AppCompatCheckBox v = (AppCompatCheckBox) view;
         v.setChecked(false);
 
@@ -109,11 +126,11 @@ public class MainActivity extends AppCompatActivity {
         // Add all items in the database into an ArrayList
         ArrayList<String> groceryList = new ArrayList<>();
         SQLiteDatabase db = mHelper.getReadableDatabase();
-        Cursor cursor = db.query(ItemContract.ItemEntry.TABLE,
-                new String[]{ItemContract.ItemEntry._ID, ItemContract.ItemEntry.COL_ITEM_TITLE},
+        Cursor cursor = db.query(mHelper.TABLE_GROCERY_LIST,
+                new String[]{ItemContract.ItemEntry._ID, mHelper.KEY_ITEM},
                 null, null, null, null, null);
         while(cursor.moveToNext()) {
-            int idx = cursor.getColumnIndex(ItemContract.ItemEntry.COL_ITEM_TITLE);
+            int idx = cursor.getColumnIndex(mHelper.KEY_ITEM);
             groceryList.add(cursor.getString(idx));
         }
 
