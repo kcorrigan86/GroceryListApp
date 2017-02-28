@@ -8,6 +8,7 @@ package kellycorrigan.grocerylistapp;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
@@ -54,6 +55,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_add_item:
                 addGroceryItem();
                 return true;
+            case R.id.view_purchased_list:
+                Intent intent = new Intent(this, PurchasedItemsActivity.class);
+                startActivity(intent);
             default:
                 return super.onOptionsItemSelected(item);
         }

@@ -3,17 +3,23 @@ package kellycorrigan.grocerylistapp;
 import android.app.ListFragment;
 import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import java.util.ArrayList;
 
 
 public class PurchasedItemsFragment extends ListFragment {
 
-    private OnFragmentInteractionListener mListener;
     private Cursor mCursor;
+    private ItemDbHelper mHelper;
+    private ArrayAdapter<String> mAdapter;
+    private ListView mItemListView;
 
     public PurchasedItemsFragment() {
         // Required empty public constructor
@@ -45,39 +51,50 @@ public class PurchasedItemsFragment extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_purchased_items, container, false);
+        return inflater.inflate(R.layout.purchased_item, container, false);
     }
 
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+    // Update the view
+    private void updateUI() {
+
+        // Add all items in the database into an ArrayList
+        ArrayList<String> groceryList = new ArrayList<>();
+        SQLiteDatabase db = mHelper.getReadableDatabase();
+
+        Cursor cursor = db.query(mHelper.TABLE_PURCHASED_LIST,
+                new String[]{mHelper.KEY_ITEM},
+                null, null, null, null, null);
+        while(cursor.moveToNext()) {
+            int idx = cursor.getColumnIndex(mHelper.KEY_ITEM);
+            groceryList.add(cursor.getString(idx));
+        }
+
+        // Add all items in the ArrayList into the view using an ArrayAdapter
+        if (mAdapter == null) {
+            mAdapter = new ArrayAdapter<>(
+                    this.getActivity(),
+                    R.layout.purchased_item,
+                    R.id.item_title,
+                    groceryList);
+        } else {
+            mAdapter.clear();
+            mAdapter.addAll(groceryList);
+            mAdapter.notifyDataSetChanged();
+        }
+
+        cursor.close();
+        db.close();
     }
+
 }
