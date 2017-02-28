@@ -47,43 +47,48 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    // Handle menu item selection
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_add_item:
-                final EditText itemEditText = new EditText(this);
-                AlertDialog dialog = new AlertDialog.Builder(this)
-                        .setTitle("Add a new grocery item")
-                        .setMessage("What do you want to add?")
-                        .setView(itemEditText)
-                        .setPositiveButton("Add", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                String item = String.valueOf(itemEditText.getText());
-                                SQLiteDatabase db = mHelper.getWritableDatabase();
-                                ContentValues values = new ContentValues();
-                                values.put(mHelper.KEY_ITEM, item);
-
-                                // Insert row
-                                db.insertWithOnConflict(
-                                        mHelper.TABLE_GROCERY_LIST,
-                                        null,
-                                        values,
-                                        SQLiteDatabase.CONFLICT_REPLACE);
-
-                                db.close();
-                                updateUI();
-                            }
-                        })
-                        .setNegativeButton("Cancel", null)
-                        .create();
-                dialog.show();
-
+                addGroceryItem();
                 return true;
-
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    // When the add item button is selected from the menu, create an alert dialog for the
+    // user to enter the item
+    private void addGroceryItem() {
+        final EditText itemEditText = new EditText(this);
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle("Add a new grocery item")
+                .setMessage("What do you want to add?")
+                .setView(itemEditText)
+                .setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String item = String.valueOf(itemEditText.getText());
+                        SQLiteDatabase db = mHelper.getWritableDatabase();
+                        ContentValues values = new ContentValues();
+                        values.put(mHelper.KEY_ITEM, item);
+
+                        // Insert row into the grocery list table to the database
+                        db.insertWithOnConflict(
+                                mHelper.TABLE_GROCERY_LIST,
+                                null,
+                                values,
+                                SQLiteDatabase.CONFLICT_REPLACE);
+
+                        db.close();
+                        updateUI();
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .create();
+        dialog.show();
     }
 
     // Once an item is checked off, it is removed from the grocery list and added
