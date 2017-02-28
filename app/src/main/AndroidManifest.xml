@@ -17,6 +17,8 @@
         </activity>
         <activity android:name=".PurchasedItemActivity">
         </activity>
+        <activity android:name=".PurchasedItemsActivity">
+        </activity>
     </application>
 
 </manifest>

@@ -1,6 +1,7 @@
 package kellycorrigan.grocerylistapp;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -54,6 +55,21 @@ public class ItemDbHelper extends SQLiteOpenHelper {
 
         // Create new tables
         onCreate(db);
+    }
+
+    // Returns a cursor that has a list for all purchased items
+    Cursor queryPurchasedItems() {
+        Cursor cursor = getReadableDatabase().query(
+                TABLE_PURCHASED_LIST,
+                null,                   // columns (all)
+                null,                   // where (all rows)
+                null,                   // whereArgs
+                null,                   // group by
+                null,                   // having
+                null,                   // order by
+                null                    // limit
+        );
+        return cursor;
     }
 }
 
