@@ -1,7 +1,6 @@
 package kellycorrigan.grocerylistapp;
 
 import android.app.Fragment;
-import android.app.ListFragment;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -19,7 +18,7 @@ public class PurchasedItemsFragment extends Fragment {
 
     private Cursor mCursor;
     private ItemDbHelper mHelper;
-    private ArrayAdapter<String> mAdapter;
+    private ListViewAdapter mAdapter;
     private ListView mItemListView;
 
     public PurchasedItemsFragment() {
@@ -40,8 +39,6 @@ public class PurchasedItemsFragment extends Fragment {
 
         // Query the purchased items and obtain a cursor
         mCursor = mHelper.queryPurchasedItems();
-
-
     }
 
     @Override
@@ -77,30 +74,22 @@ public class PurchasedItemsFragment extends Fragment {
     private void updateUI() {
 
         // Add all items in the database into an ArrayList
-        ArrayList<String> groceryList = new ArrayList<>();
+        ArrayList<PurchasedItem> purchasedList = new ArrayList<PurchasedItem>();
         SQLiteDatabase db = mHelper.getReadableDatabase();
 
         Cursor cursor = db.query(mHelper.TABLE_PURCHASED_LIST,
-                new String[]{mHelper.KEY_ITEM},
+                new String[]{mHelper.KEY_ITEM, mHelper.KEY_DATE},
                 null, null, null, null, null);
         while(cursor.moveToNext()) {
-            int idx = cursor.getColumnIndex(mHelper.KEY_ITEM);
-            groceryList.add(cursor.getString(idx));
+            PurchasedItem item = new PurchasedItem();
+            item.setItem(cursor.getString(cursor.getColumnIndex(mHelper.KEY_ITEM)));
+            item.setDate(cursor.getString(cursor.getColumnIndex(mHelper.KEY_DATE)));
+            purchasedList.add(item);
         }
 
-        // Add all items in the ArrayList into the view using an ArrayAdapter
-        if (mAdapter == null) {
-            mAdapter = new ArrayAdapter<>(
-                    this.getActivity(),
-                    R.layout.purchased_item,
-                    R.id.purchased_item_title,
-                    groceryList);
-            mItemListView.setAdapter(mAdapter);
-        } else {
-            mAdapter.clear();
-            mAdapter.addAll(groceryList);
-            mAdapter.notifyDataSetChanged();
-        }
+        // Add items from the ArrayList into the view using ListViewAdapter
+        mAdapter = new ListViewAdapter(this.getActivity(), purchasedList);
+        mItemListView.setAdapter(mAdapter);
 
         cursor.close();
         db.close();

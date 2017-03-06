@@ -3,6 +3,7 @@ package kellycorrigan.grocerylistapp;
 // Package sources:
 // https://www.sitepoint.com/starting-android-development-creating-todo-app/
 // http://www.androidhive.info/2013/09/android-sqlite-database-with-multiple-tables/
+// http://android-delight.blogspot.com/2015/12/tablelayout-like-listview-multi-column.html
 
 
 import android.app.AlertDialog;
@@ -22,7 +23,10 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -113,6 +117,12 @@ public class MainActivity extends AppCompatActivity {
         // Add the item to the purchased items table of the database
         ContentValues values = new ContentValues();
         values.put(mHelper.KEY_ITEM, item);
+
+        // Add the current date to the purchased items table
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyy");
+        Date date = new Date();
+        values.put(mHelper.KEY_DATE, dateFormat.format(date));
+
         db.insertWithOnConflict(
                 mHelper.TABLE_PURCHASED_LIST,
                 null,
