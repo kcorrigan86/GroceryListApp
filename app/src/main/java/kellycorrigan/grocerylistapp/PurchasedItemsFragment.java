@@ -1,5 +1,6 @@
 package kellycorrigan.grocerylistapp;
 
+import android.app.Fragment;
 import android.app.ListFragment;
 import android.content.Context;
 import android.database.Cursor;
@@ -14,7 +15,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 
-public class PurchasedItemsFragment extends ListFragment {
+public class PurchasedItemsFragment extends Fragment {
 
     private Cursor mCursor;
     private ItemDbHelper mHelper;
@@ -35,10 +36,12 @@ public class PurchasedItemsFragment extends ListFragment {
         setHasOptionsMenu(true);
 
         // Create a new ItemDbHelper
-        ItemDbHelper itemDbHelper = new ItemDbHelper(this.getActivity());
+        mHelper = new ItemDbHelper(this.getActivity());
 
         // Query the purchased items and obtain a cursor
-        mCursor = itemDbHelper.queryPurchasedItems();
+        mCursor = mHelper.queryPurchasedItems();
+
+
     }
 
     @Override
@@ -51,7 +54,12 @@ public class PurchasedItemsFragment extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.purchased_item, container, false);
+        View view = inflater.inflate(R.layout.fragment_purchased_items, container, false);
+        mItemListView = (ListView) view.findViewById(R.id.purchased_items_list);
+
+        updateUI();
+
+        return view;
     }
 
 
@@ -85,8 +93,9 @@ public class PurchasedItemsFragment extends ListFragment {
             mAdapter = new ArrayAdapter<>(
                     this.getActivity(),
                     R.layout.purchased_item,
-                    R.id.item_title,
+                    R.id.purchased_item_title,
                     groceryList);
+            mItemListView.setAdapter(mAdapter);
         } else {
             mAdapter.clear();
             mAdapter.addAll(groceryList);
