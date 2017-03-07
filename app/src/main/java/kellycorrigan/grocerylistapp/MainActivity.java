@@ -4,17 +4,26 @@ package kellycorrigan.grocerylistapp;
 // https://www.sitepoint.com/starting-android-development-creating-todo-app/
 // http://www.androidhive.info/2013/09/android-sqlite-database-with-multiple-tables/
 // http://android-delight.blogspot.com/2015/12/tablelayout-like-listview-multi-column.html
-
+// http://stackoverflow.com/questions/28535703/best-way-to-get-user-gps-location-in-background-in-android
 
 import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Build;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatCheckBox;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,15 +34,18 @@ import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int LOCATION_REQUEST_CODE = 8;
     private static final String TAG = "MainActivity";
     private ItemDbHelper mHelper;
     private ListView mItemListView;
     private ArrayAdapter<String> mAdapter;
+    private Location mLocation;
+    private LocationManager mLocationManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
 
         mHelper = new ItemDbHelper(this);
         mItemListView = (ListView) findViewById(R.id.grocery_list);
+
+        locationSetup();
 
         updateUI();
     }
@@ -171,4 +185,47 @@ public class MainActivity extends AppCompatActivity {
         cursor.close();
         db.close();
     }
+
+    // Perform setup necessary to access device location
+    private void locationSetup() {
+        // Acquire a reference to the system Location Manager
+        mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        // Define a listener that responds to location updates
+        LocationListener locationListener = new LocationListener() {
+            public void onLocationChanged(Location location) {
+                // Called when a new location is found by the network location provider.
+                mLocation = location;
+            }
+
+            public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+            public void onProviderEnabled(String provider) {}
+
+            public void onProviderDisabled(String provider) {}
+        };
+
+        // Request coarse location permission if we don't have it already
+        if (ContextCompat.checkSelfPermission(
+                this, android.Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[] {android.Manifest.permission.ACCESS_COARSE_LOCATION},
+                    LOCATION_REQUEST_CODE);
+        }
+
+        // If we have location permission, register the listener with the
+        // Location Manager to receive location updates
+        if (ContextCompat.checkSelfPermission(
+                this, android.Manifest.permission.ACCESS_COARSE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED) {
+            mLocationManager.requestLocationUpdates(
+                    LocationManager.NETWORK_PROVIDER,
+                    0,
+                    0,
+                    locationListener);
+        }
+    }
 }
+
