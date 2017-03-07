@@ -23,8 +23,7 @@ public class ItemDbHelper extends SQLiteOpenHelper {
     public static final String KEY_ID = "id";
     public static final String KEY_ITEM = "item";
     public static final String KEY_DATE = "date";
-    public static final String KEY_LAT = "latitude";
-    public static final String KEY_LONG = "longitude";
+    public static final String KEY_LOCATION = "latitude";
 
     // Grocery list table create statement
     private static final String CREATE_TABLE_GROCERY = "CREATE TABLE " +
@@ -34,7 +33,7 @@ public class ItemDbHelper extends SQLiteOpenHelper {
     // Purchased items table create statement
     private static final String CREATE_TABLE_PURCHASED = "CREATE TABLE " +
             TABLE_PURCHASED_LIST + " (" + KEY_ID + " INTEGER PRIMARY KEY," + KEY_ITEM +
-            " TEXT," + KEY_DATE + " DATETIME) ";
+            " TEXT," + KEY_DATE + " DATETIME," + KEY_LOCATION + " TEXT)";
 
     public ItemDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);

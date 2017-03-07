@@ -1,21 +1,20 @@
 package kellycorrigan.grocerylistapp;
 
-/**
- * Created by kellycorrigan on 3/5/17.
- */
-
 public class PurchasedItem {
     private String mItem;
     private String mDate;
+    private String mLocation;
 
     public PurchasedItem() {
         mItem = "";
         mDate = "";
+        mLocation = "";
     }
 
-    public PurchasedItem(String item, String date) {
+    public PurchasedItem(String item, String date, String location) {
         mItem = item;
         mDate = date;
+        mLocation = location;
     }
 
     public String getItem() {
@@ -26,11 +25,19 @@ public class PurchasedItem {
         return mDate;
     }
 
+    public String getlocation() {
+        return mLocation;
+    }
+
     public void setItem(String item) {
         mItem = item;
     }
 
     public void setDate(String date) {
         mDate = date;
+    }
+
+    public void setLocation(String location) {
+        mLocation = location;
     }
 }

@@ -41,6 +41,7 @@ public class ListViewAdapter extends BaseAdapter {
     private class ViewHolder {
         TextView mItem;
         TextView mDate;
+        TextView mLocation;
     }
 
     @Override
@@ -54,6 +55,7 @@ public class ListViewAdapter extends BaseAdapter {
             holder = new ViewHolder();
             holder.mItem = (TextView) convertView.findViewById(R.id.purchased_item_desc);
             holder.mDate = (TextView) convertView.findViewById(R.id.item_date);
+            holder.mLocation = (TextView) convertView.findViewById(R.id.item_location);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -62,6 +64,7 @@ public class ListViewAdapter extends BaseAdapter {
         PurchasedItem item = mPurchasedItemList.get(position);
         holder.mItem.setText(item.getItem());
         holder.mDate.setText(item.getDate());
+        holder.mLocation.setText(item.getlocation());
 
         return convertView;
     }

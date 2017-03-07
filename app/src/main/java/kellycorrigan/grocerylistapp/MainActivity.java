@@ -4,7 +4,7 @@ package kellycorrigan.grocerylistapp;
 // https://www.sitepoint.com/starting-android-development-creating-todo-app/
 // http://www.androidhive.info/2013/09/android-sqlite-database-with-multiple-tables/
 // http://android-delight.blogspot.com/2015/12/tablelayout-like-listview-multi-column.html
-// http://stackoverflow.com/questions/28535703/best-way-to-get-user-gps-location-in-background-in-android
+// http://stackoverflow.com/questions/10811400/android-location-listener-or-android-events-in-general
 
 import android.app.AlertDialog;
 import android.content.ContentValues;
@@ -17,13 +17,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatCheckBox;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -51,6 +49,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Uncomment to delete database
+        // Context context = getApplicationContext();
+        // context.deleteDatabase("groceryItemsManager");
 
         mHelper = new ItemDbHelper(this);
         mItemListView = (ListView) findViewById(R.id.grocery_list);
@@ -136,6 +138,17 @@ public class MainActivity extends AppCompatActivity {
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyy");
         Date date = new Date();
         values.put(mHelper.KEY_DATE, dateFormat.format(date));
+
+        // Add the most recent location to the purchased items table
+        String location;
+        if (mLocation != null) {
+            String latitude = String.format("%.4f", mLocation.getLatitude());
+            String longitude = String.format("%.4f", mLocation.getLongitude());
+            location = "(" + latitude + ", " + longitude + ")";
+        } else {
+            location = "location unavailable";
+        }
+        values.put(mHelper.KEY_LOCATION, location);
 
         db.insertWithOnConflict(
                 mHelper.TABLE_PURCHASED_LIST,

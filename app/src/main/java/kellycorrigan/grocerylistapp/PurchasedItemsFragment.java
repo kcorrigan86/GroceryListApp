@@ -78,12 +78,13 @@ public class PurchasedItemsFragment extends Fragment {
         SQLiteDatabase db = mHelper.getReadableDatabase();
 
         Cursor cursor = db.query(mHelper.TABLE_PURCHASED_LIST,
-                new String[]{mHelper.KEY_ITEM, mHelper.KEY_DATE},
+                new String[]{mHelper.KEY_ITEM, mHelper.KEY_DATE, mHelper.KEY_LOCATION},
                 null, null, null, null, null);
         while(cursor.moveToNext()) {
             PurchasedItem item = new PurchasedItem();
             item.setItem(cursor.getString(cursor.getColumnIndex(mHelper.KEY_ITEM)));
             item.setDate(cursor.getString(cursor.getColumnIndex(mHelper.KEY_DATE)));
+            item.setLocation(cursor.getString(cursor.getColumnIndex(mHelper.KEY_LOCATION)));
             purchasedList.add(item);
         }
 
