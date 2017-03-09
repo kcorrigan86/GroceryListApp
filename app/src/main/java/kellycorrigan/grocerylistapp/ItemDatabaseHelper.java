@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class ItemDbHelper extends SQLiteOpenHelper {
+public class ItemDatabaseHelper extends SQLiteOpenHelper {
     // Logcat tag
     private static final String LOG = "DatabaseHelper";
 
@@ -35,7 +35,7 @@ public class ItemDbHelper extends SQLiteOpenHelper {
             TABLE_PURCHASED_LIST + " (" + KEY_ID + " INTEGER PRIMARY KEY," + KEY_ITEM +
             " TEXT," + KEY_DATE + " DATETIME," + KEY_LOCATION + " TEXT)";
 
-    public ItemDbHelper(Context context) {
+    public ItemDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 

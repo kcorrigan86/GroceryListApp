@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int LOCATION_REQUEST_CODE = 8;
     private static final String TAG = "MainActivity";
-    private ItemDbHelper mHelper;
+    private ItemDatabaseHelper mHelper;
     private ListView mItemListView;
     private ArrayAdapter<String> mAdapter;
     private Location mLocation;
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         // Context context = getApplicationContext();
         // context.deleteDatabase("groceryItemsManager");
 
-        mHelper = new ItemDbHelper(this);
+        mHelper = new ItemDatabaseHelper(this);
         mItemListView = (ListView) findViewById(R.id.grocery_list);
 
         locationSetup();
