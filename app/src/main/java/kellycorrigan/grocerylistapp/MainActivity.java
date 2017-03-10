@@ -22,6 +22,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatCheckBox;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -86,11 +87,15 @@ public class MainActivity extends AppCompatActivity {
     // When the add item button is selected from the menu, create an alert dialog for the
     // user to enter the item
     private void addGroceryItem() {
-        final EditText itemEditText = new EditText(this);
+        // Set up the view that the user will be entering the item into
+        LayoutInflater layoutInflater = LayoutInflater.from(this);
+        View view = layoutInflater.inflate(R.layout.new_item_entry, null);
+        final EditText itemEditText = (EditText) view.findViewById(R.id.editTextDialogUserInput);
+
+        // Set up the alert dialog to add a new item
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle("Add a new grocery item")
-                .setMessage("What do you want to add?")
-                .setView(itemEditText)
+                .setView(view)
                 .setPositiveButton("Add", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
