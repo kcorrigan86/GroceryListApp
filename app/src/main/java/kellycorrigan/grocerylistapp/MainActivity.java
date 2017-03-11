@@ -7,13 +7,10 @@ package kellycorrigan.grocerylistapp;
 // http://stackoverflow.com/questions/10811400/android-location-listener-or-android-events-in-general
 
 import android.app.AlertDialog;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -31,14 +28,12 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int LOCATION_REQUEST_CODE = 8;
-    private static final String TAG = "MainActivity";
     private ItemDatabaseHelper mHelper;
     private ListView mItemListView;
     private ArrayAdapter<String> mAdapter;
@@ -99,19 +94,9 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton("Add", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        // Add the item into the database when the 'Add' button is clicked
                         String item = String.valueOf(itemEditText.getText());
-                        SQLiteDatabase db = mHelper.getWritableDatabase();
-                        ContentValues values = new ContentValues();
-                        values.put(mHelper.KEY_ITEM, item);
-
-                        // Insert row into the grocery list table to the database
-                        db.insertWithOnConflict(
-                                mHelper.TABLE_GROCERY_LIST,
-                                null,
-                                values,
-                                SQLiteDatabase.CONFLICT_REPLACE);
-
-                        db.close();
+                        mHelper.addGroceryItem(item);
                         updateUI();
                     }
                 })
@@ -129,39 +114,20 @@ public class MainActivity extends AppCompatActivity {
         String item = String.valueOf(itemTextView.getText());
 
         // Remove the item from the grocery list table of the database
-        SQLiteDatabase db = mHelper.getWritableDatabase();
-        db.delete(
-                mHelper.TABLE_GROCERY_LIST,
-                mHelper.KEY_ITEM + " = ?",
-                new String[]{item});
+        mHelper.removeGroceryItem(item);
 
-        // Add the item to the purchased items table of the database
-        ContentValues values = new ContentValues();
-        values.put(mHelper.KEY_ITEM, item);
-
-        // Add the current date to the purchased items table
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyy");
-        Date date = new Date();
-        values.put(mHelper.KEY_DATE, dateFormat.format(date));
-
-        // Add the most recent location to the purchased items table
+        // Get the most recent location, if available
         String location;
         if (mLocation != null) {
-            String latitude = String.format("%.4f", mLocation.getLatitude());
-            String longitude = String.format("%.4f", mLocation.getLongitude());
+            String latitude = String.format(Locale.US, "%.4f", mLocation.getLatitude());
+            String longitude = String.format(Locale.US, "%.4f", mLocation.getLongitude());
             location = "(" + latitude + ", " + longitude + ")";
         } else {
             location = "location unavailable";
         }
-        values.put(mHelper.KEY_LOCATION, location);
 
-        db.insertWithOnConflict(
-                mHelper.TABLE_PURCHASED_LIST,
-                null,
-                values,
-                SQLiteDatabase.CONFLICT_REPLACE);
-
-        db.close();
+        // Add the item into the purchased items table of the database
+        mHelper.addPurchasedItem(item, location);
 
         // Uncheck the checkbox in the grocery list because it will be reused
         AppCompatCheckBox v = (AppCompatCheckBox) view;
@@ -173,18 +139,8 @@ public class MainActivity extends AppCompatActivity {
 
     // Update the view
     private void updateUI() {
-
-        // Add all items in the database into an ArrayList
-        ArrayList<String> groceryList = new ArrayList<>();
-        SQLiteDatabase db = mHelper.getReadableDatabase();
-
-        Cursor cursor = db.query(mHelper.TABLE_GROCERY_LIST,
-                new String[]{mHelper.KEY_ITEM},
-                null, null, null, null, null);
-        while(cursor.moveToNext()) {
-            int idx = cursor.getColumnIndex(mHelper.KEY_ITEM);
-            groceryList.add(cursor.getString(idx));
-        }
+        // Get an ArrayList of all items in the grocery list database table
+        ArrayList<String> groceryList = mHelper.queryAllGroceryItems();
 
         // Add all items in the ArrayList into the view using an ArrayAdapter
         if (mAdapter == null) {
@@ -199,9 +155,6 @@ public class MainActivity extends AppCompatActivity {
             mAdapter.addAll(groceryList);
             mAdapter.notifyDataSetChanged();
         }
-
-        cursor.close();
-        db.close();
     }
 
     // Perform setup necessary to access device location
