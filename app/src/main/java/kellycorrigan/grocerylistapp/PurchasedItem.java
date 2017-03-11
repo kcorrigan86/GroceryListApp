@@ -1,43 +1,37 @@
 package kellycorrigan.grocerylistapp;
 
-public class PurchasedItem {
+class PurchasedItem {
     private String mItem;
     private String mDate;
     private String mLocation;
 
-    public PurchasedItem() {
+    PurchasedItem() {
         mItem = "";
         mDate = "";
         mLocation = "";
     }
 
-    public PurchasedItem(String item, String date, String location) {
-        mItem = item;
-        mDate = date;
-        mLocation = location;
-    }
-
-    public String getItem() {
+    String getItem() {
         return mItem;
     }
 
-    public String getDate() {
+    String getDate() {
         return mDate;
     }
 
-    public String getlocation() {
+    String getLocation() {
         return mLocation;
     }
 
-    public void setItem(String item) {
+    void setItem(String item) {
         mItem = item;
     }
 
-    public void setDate(String date) {
+    void setDate(String date) {
         mDate = date;
     }
 
-    public void setLocation(String location) {
+    void setLocation(String location) {
         mLocation = location;
     }
 }

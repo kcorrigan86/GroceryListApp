@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Grocery List</string>
+    <string name="menu_item_title_purchased_items">Purchased Items</string>
+    <string name="menu_item_title_add_item">Add Item</string>
     <string name="title_activity_purchased_items">Purchased Items</string>
     <string name="new_item_prompt">What do you want to add?</string>
 </resources>

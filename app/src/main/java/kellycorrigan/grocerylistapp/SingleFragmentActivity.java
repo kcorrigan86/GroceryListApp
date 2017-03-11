@@ -3,14 +3,15 @@ package kellycorrigan.grocerylistapp;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 
 
-public abstract class SingleFragmentActivity extends ActionBarActivity {
+public abstract class SingleFragmentActivity extends AppCompatActivity {
 
     protected abstract Fragment createFragment();
 
-    protected int getLayoutId() {
+    @SuppressWarnings("SameReturnValue")
+    private int getLayoutId() {
         return R.layout.activity_single_fragment;
     }
 

@@ -5,13 +5,13 @@
     <item
         android:id="@+id/view_purchased_list"
         android:icon="@android:drawable/checkbox_on_background"
-        android:title="Purchased List"
-        app:showAsAction="always" />
+        android:title="@string/menu_item_title_purchased_items"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_add_item"
         android:icon="@android:drawable/ic_menu_add"
-        android:title="Add Item"
-        app:showAsAction="always" />
+        android:title="@string/menu_item_title_add_item"
+        app:showAsAction="ifRoom" />
 
 </menu>

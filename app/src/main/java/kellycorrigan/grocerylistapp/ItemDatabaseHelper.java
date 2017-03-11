@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 class ItemDatabaseHelper extends SQLiteOpenHelper {
     // Database Version
@@ -113,7 +114,7 @@ class ItemDatabaseHelper extends SQLiteOpenHelper {
 
     // Add an item into the purchased items table
     void addPurchasedItem(String item, String location) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyy", Locale.US);
         Date date = new Date();
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();

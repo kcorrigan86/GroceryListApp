@@ -1,5 +1,6 @@
 package kellycorrigan.grocerylistapp;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,15 +10,11 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-/**
- * Created by kellycorrigan on 3/5/17.
- */
+class ListViewAdapter extends BaseAdapter {
+    private final ArrayList<PurchasedItem> mPurchasedItemList;
+    private final Activity activity;
 
-public class ListViewAdapter extends BaseAdapter {
-    public ArrayList<PurchasedItem> mPurchasedItemList;
-    Activity activity;
-
-    public ListViewAdapter(Activity activity, ArrayList<PurchasedItem> purchasedItemList) {
+    ListViewAdapter(Activity activity, ArrayList<PurchasedItem> purchasedItemList) {
         super();
         this.activity = activity;
         this.mPurchasedItemList = purchasedItemList;
@@ -44,6 +41,7 @@ public class ListViewAdapter extends BaseAdapter {
         TextView mLocation;
     }
 
+    @SuppressLint("InflateParams")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
@@ -64,7 +62,7 @@ public class ListViewAdapter extends BaseAdapter {
         PurchasedItem item = mPurchasedItemList.get(position);
         holder.mItem.setText(item.getItem());
         holder.mDate.setText(item.getDate());
-        holder.mLocation.setText(item.getlocation());
+        holder.mLocation.setText(item.getLocation());
 
         return convertView;
     }

@@ -6,6 +6,7 @@ package kellycorrigan.grocerylistapp;
 // http://android-delight.blogspot.com/2015/12/tablelayout-like-listview-multi-column.html
 // http://stackoverflow.com/questions/10811400/android-location-listener-or-android-events-in-general
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -83,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
     private void addGroceryItem() {
         // Set up the view that the user will be entering the item into
         LayoutInflater layoutInflater = LayoutInflater.from(this);
-        View view = layoutInflater.inflate(R.layout.new_item_entry, null);
+        @SuppressLint("InflateParams") View view = layoutInflater.inflate(R.layout.new_item_entry, null);
         final EditText itemEditText = (EditText) view.findViewById(R.id.editTextDialogUserInput);
 
         // Set up the alert dialog to add a new item
