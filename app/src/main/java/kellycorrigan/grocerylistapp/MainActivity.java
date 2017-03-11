@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -38,8 +39,6 @@ public class MainActivity extends AppCompatActivity {
     private ListView mItemListView;
     private ArrayAdapter<String> mAdapter;
     private Location mLocation;
-    private LocationManager mLocationManager;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,7 +159,8 @@ public class MainActivity extends AppCompatActivity {
     // Perform setup necessary to access device location
     private void locationSetup() {
         // Acquire a reference to the system Location Manager
-        mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        LocationManager locationManager =
+                (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
         // Define a listener that responds to location updates
         LocationListener locationListener = new LocationListener() {
@@ -186,12 +186,19 @@ public class MainActivity extends AppCompatActivity {
                     LOCATION_REQUEST_CODE);
         }
 
-        // If we have location permission, register the listener with the
-        // Location Manager to receive location updates
+        // If we have location permission, get the last known location and register the
+        // listener with the Location Manager to receive location updates
         if (ContextCompat.checkSelfPermission(
                 this, android.Manifest.permission.ACCESS_COARSE_LOCATION) ==
                 PackageManager.PERMISSION_GRANTED) {
-            mLocationManager.requestLocationUpdates(
+            Criteria locationCritera = new Criteria();
+            String providerName = locationManager.getBestProvider(locationCritera,
+                    true);
+            if (providerName != null) {
+                mLocation = locationManager.getLastKnownLocation(providerName);
+            }
+
+            locationManager.requestLocationUpdates(
                     LocationManager.NETWORK_PROVIDER,
                     0,
                     0,
