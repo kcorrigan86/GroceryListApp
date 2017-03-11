@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.ArrayList;
+
 public class ItemDatabaseHelper extends SQLiteOpenHelper {
     // Logcat tag
     private static final String LOG = "DatabaseHelper";
@@ -56,19 +58,35 @@ public class ItemDatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    // Returns a cursor that has a list for all purchased items
-    Cursor queryPurchasedItems() {
-        Cursor cursor = getReadableDatabase().query(
+
+    // Return an ArrayList of all PurchasedItems for the purchased items database
+    ArrayList<PurchasedItem> queryAllPurchasedItems() {
+        ArrayList<PurchasedItem> purchasedList = new ArrayList<PurchasedItem>();
+        SQLiteDatabase db = getReadableDatabase();
+
+        Cursor cursor = db.query(
                 TABLE_PURCHASED_LIST,
-                null,                   // columns (all)
-                null,                   // where (all rows)
-                null,                   // whereArgs
-                null,                   // group by
-                null,                   // having
-                null,                   // order by
-                null                    // limit
+                new String[]{KEY_ITEM, KEY_DATE, KEY_LOCATION},     // columns
+                null,                                               // where (all rows)
+                null,                                               // whereArgs
+                null,                                               // group by
+                null,                                               // having
+                null,                                               // order by
+                null                                                // limit
         );
-        return cursor;
+
+        while(cursor.moveToNext()) {
+            PurchasedItem item = new PurchasedItem();
+            item.setItem(cursor.getString(cursor.getColumnIndex(KEY_ITEM)));
+            item.setDate(cursor.getString(cursor.getColumnIndex(KEY_DATE)));
+            item.setLocation(cursor.getString(cursor.getColumnIndex(KEY_LOCATION)));
+            purchasedList.add(item);
+        }
+
+        cursor.close();
+        db.close();
+
+        return purchasedList;
     }
 }
 
