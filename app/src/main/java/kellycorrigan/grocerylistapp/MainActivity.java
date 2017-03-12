@@ -72,8 +72,7 @@ public class MainActivity extends AppCompatActivity {
                 addGroceryItem();
                 return true;
             case R.id.view_purchased_list:
-                Intent intent = new Intent(this, PurchasedItemsActivity.class);
-                startActivity(intent);
+                viewPurchasedItems();
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -96,7 +95,9 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         // Add the item into the database when the 'Add' button is clicked
                         String item = String.valueOf(itemEditText.getText());
-                        mHelper.addGroceryItem(item);
+                        if (item.length() > 0) {
+                            mHelper.addGroceryItem(item);
+                        }
                         updateUI();
                     }
                 })
@@ -154,6 +155,23 @@ public class MainActivity extends AppCompatActivity {
             mAdapter.clear();
             mAdapter.addAll(groceryList);
             mAdapter.notifyDataSetChanged();
+        }
+    }
+
+    // Show the purchased items list if there are items to show; otherwise display an alert
+    private void viewPurchasedItems() {
+        ArrayList<PurchasedItem> purchasedItems = mHelper.queryAllPurchasedItems();
+        if (purchasedItems.isEmpty()) {
+            // Display an alert dialog to let the user know there are no purchased items
+            AlertDialog dialog = new AlertDialog.Builder(this)
+                    .setTitle("Purchased items list is empty")
+                    .setNeutralButton("Ok", null)
+                    .create();
+            dialog.show();
+        } else {
+            // Show the purchased items list
+            Intent intent = new Intent(this, PurchasedItemsActivity.class);
+            startActivity(intent);
         }
     }
 

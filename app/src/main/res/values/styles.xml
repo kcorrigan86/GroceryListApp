@@ -8,4 +8,14 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="ItemFont" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">#1a3bab</item>
+        <item name="android:typeface">sans</item>
+    </style>
+
+    <style name="ItemInfoFont" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">#4762bb</item>
+        <item name="android:typeface">sans</item>
+    </style>
+
 </resources>
