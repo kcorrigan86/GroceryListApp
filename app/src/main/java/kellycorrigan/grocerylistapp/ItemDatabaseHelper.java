@@ -16,7 +16,7 @@ class ItemDatabaseHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
 
     // Database name
-    private static final String DATABASE_NAME = "groceryItemsManager";
+    static final String DATABASE_NAME = "groceryItemsManager";
 
     // Table names
     private static final String TABLE_GROCERY_LIST = "grocery_list_items";
